@@ -1,0 +1,64 @@
+<?php
+
+include_once('../Conexion/conexion.php');
+session_start();
+$cn = conectarse();
+
+if (empty($_SESSION['txtusuario'])) {
+
+    header('location: ../index.php');
+} else {
+
+    $cbopersonal = strtoupper($_POST['cbopersonal']);
+    $txtusuario = strtoupper($_POST['txtusuario']);
+    $txtclave = strtoupper($_POST['txtclave']);
+    ?>
+    <script type="text/javascript">
+        function ok() {
+            swal(
+                    'Datos registrados!',
+                    'Correctamente',
+                    'success'
+                    )
+        }
+        function error() {
+            swal({
+                title: 'Duplicidad de Datos!',
+                text: 'Datos Existentes en la Base de Datos',
+                type: 'error',
+                confirmButtonText: 'Aceptar'
+            })
+        }
+        limpiarusuario();
+    </script>
+    <?php
+
+    $rsdatos = "select count(*) total FROM usuario where usuario = '$txtusuario'";
+    $datos = mysql_query($rsdatos);
+    $rsdatos = mysql_fetch_array($datos);
+    $total = $rsdatos['total'];
+
+
+    if ($total == '0') {
+        $rsinsertar = "INSERT INTO usuario (usuario,clave,estado,idpersona)  VALUES
+      ('$txtusuario','$txtclave','ACTIVO','$cbopersonal')";
+        $insertar = mysql_query($rsinsertar);
+        echo "<script>";
+        echo "ok();";
+        echo "limpiar();";
+        echo "</script>";
+    } else {
+
+        echo "<script>";
+        echo "error();";
+        echo "</script>";
+    }
+}
+?>
+
+
+
+
+
+
+
